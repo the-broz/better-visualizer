@@ -10,7 +10,7 @@ export default {
     description: 'Replaces the default visualizer with opne that reacts to your music. Requires Cider Audio.',
     version: '0.0.1',
     author: 'thebroz',
-    repo: 'https://github.com/ciderapp/plugin-template',
+    repo: 'https://github.com/the-broz/better-visualizer',
     entry: {
         'plugin.js': {
             type: 'main',

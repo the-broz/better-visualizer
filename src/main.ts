@@ -2,7 +2,7 @@ import { defineCustomElement } from 'vue';
 import type { App, Ref } from 'vue';
 import { ref } from 'vue';
 import { createPinia } from "pinia";
-import { definePluginContext, useCiderAudio, addMediaItemContextMenuEntry } from '@ciderapp/pluginkit';
+import { definePluginContext, useCiderAudio } from '@ciderapp/pluginkit';
 import MySettings from "./components/MySettings.vue";
 import PluginConfig from './plugin.config';
 
@@ -72,18 +72,24 @@ const { plugin, setupConfig, customElementName } = definePluginContext({
                             audio.source.connect(analyserNode);
                         }
                     }
-                }catch(err){
+                } catch (err) {
                     console.error(err);
                     return
                 }
             }
             target.querySelector('.playing-indicator')?.remove();
 
+            const previousVisualizer = document.querySelector('#song-visualizer');
+            if (previousVisualizer) {
+                previousVisualizer.remove();
+            }
+
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 100;
             canvas.style.width = '100%';
             canvas.style.height = '100%';
+            canvas.id = 'song-visualizer';
             canvas.style.display = 'block';
             canvas.style.padding = "20%";
             target.appendChild(canvas);
@@ -112,17 +118,17 @@ const { plugin, setupConfig, customElementName } = definePluginContext({
 
                     const averageValue = segmentData.reduce((a, b) => a + b, 0) / segmentData.length;
                     const scaledHeight = Math.log1p(averageValue) * 20;
-                    const normalizedHeight = Math.max(10, scaledHeight); 
+                    const normalizedHeight = Math.max(10, scaledHeight);
 
                     ctx.fillStyle = musicKeyColor || `rgb(${averageValue + 100}, 50, 150)`;
 
 
                     ctx.beginPath();
                     ctx.roundRect(
-                        x, 
-                        centerY - normalizedHeight / 2, 
-                        barWidth, 
-                        normalizedHeight, 
+                        x,
+                        centerY - normalizedHeight / 2,
+                        barWidth,
+                        normalizedHeight,
                         10
                     );
                     ctx.stroke();
@@ -142,7 +148,10 @@ const { plugin, setupConfig, customElementName } = definePluginContext({
             mutations.forEach(mutation => {
                 if (mutation.type === 'childList') {
                     const oldElement = document.querySelector('.playing-indicator')?.parentElement;
-                    if (oldElement) {
+                    const trackNumberElement = document.querySelector('.playing-indicator')?.parentElement?.parentElement;
+                    if (trackNumberElement?.classList.contains('trackNumber')) {
+                        replaceVisualizer(trackNumberElement);
+                    } else if (oldElement) {
                         replaceVisualizer(oldElement);
                     }
                 }
