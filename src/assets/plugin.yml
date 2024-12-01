@@ -1,0 +1,8 @@
+identifier: me.thebroz.bettervisualizer
+name: Better Visualizer
+description: Replaces the default visualizer with a more reactive one.
+author: thebroz
+repo: https://github.com/ciderapp/plugin-template-wip
+entry:
+  "plugin.js":
+    type: main
